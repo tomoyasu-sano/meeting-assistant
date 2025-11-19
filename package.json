@@ -1,0 +1,40 @@
+{
+  "name": "care-meeting-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3500",
+    "build": "next build",
+    "start": "next start -p 3501",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@google-cloud/speech": "^7.2.1",
+    "@google-cloud/text-to-speech": "^6.4.0",
+    "@google-cloud/translate": "^9.3.0",
+    "@google-cloud/vertexai": "^1.10.0",
+    "@google/genai": "^0.7.0",
+    "@google/generative-ai": "^0.24.1",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.78.0",
+    "@types/ws": "^8.18.1",
+    "google-auth-library": "^10.5.0",
+    "next": "16.0.1",
+    "next-intl": "^4.5.3",
+    "openai": "^6.8.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-markdown": "^10.1.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.1",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
