@@ -33,7 +33,8 @@ export function getIndustryLabel(value: string): string {
  * 複数の業界コードから日本語ラベルの配列を取得
  */
 export function getIndustryLabels(values: string[]): string[] {
-  return values
-    .map(value => INDUSTRIES.find(ind => ind.value === value)?.label)
-    .filter((label): label is string => label !== undefined);
+  return values.flatMap(value => {
+    const label = INDUSTRIES.find(ind => ind.value === value)?.label;
+    return label ? [label] : [];
+  });
 }
