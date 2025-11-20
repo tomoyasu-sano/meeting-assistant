@@ -31,7 +31,7 @@ export function CustomSelect({
 
   // クリック外側で閉じる
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: Event) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
