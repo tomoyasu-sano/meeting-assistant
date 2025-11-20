@@ -139,7 +139,7 @@ export default async function MeetingDetailPage({
           </div>
           <Link
             href={`/meetings/${meetingId}/live`}
-            className="group rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-2.5 text-sm font-bold text-white hover:scale-105 hover:shadow-lg hover:shadow-green-500/50 transition-all"
+            className="group rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-500 px-6 py-2.5 text-sm font-bold text-white hover:scale-105 hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
           >
             <span className="flex items-center gap-2">
               {t('meeting.startLiveSession')}

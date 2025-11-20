@@ -112,7 +112,7 @@ export function MeetingCard({ meeting }: { meeting: Meeting }) {
         </Link>
         <Link
           href={`/meetings/${meeting.id}/live`}
-          className="flex-1 rounded-lg bg-green-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-green-700"
+          className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-indigo-700"
         >
           {t('meeting.startLiveSession')}
         </Link>

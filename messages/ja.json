@@ -239,8 +239,8 @@
     "viewer": {
       "viewerMode": "閲覧モード",
       "viewOnlyMode": "閲覧専用",
-      "viewingMeeting": "この会議を閲覧しています。セッションの操作はできません。",
-      "discussionAssistReadOnly": "議論アシスト（閲覧専用）",
+      "viewingMeeting": "",
+      "discussionAssistReadOnly": "議論アシスト",
       "canViewHostConversation": "ホストのAI会話を閲覧できます。質問はホストを通じて行ってください。",
       "waitingForHost": "ホストがAIと会話を始めると、ここに表示されます",
       "askHostToQuestion": "💡 質問がある場合は、ホストに伝えてAIに質問してもらいましょう",
@@ -290,7 +290,7 @@
   },
   "history": {
     "title": "過去履歴",
-    "description": "過去に開催したセッションのサマリーと文字起こしを確認できます",
+    "description": "過去に開催した会議のサマリーと全文を確認できます",
     "mostRecent": "直近1回",
     "lastThree": "直近3回",
     "showSummaries": "サマリーを表示",
@@ -311,7 +311,7 @@
   },
   "evaluation": {
     "title": "会議評価",
-    "description": "過去の会議に対するAIの評価とフィードバックを確認できます",
+    "description": "過去の会議に対するフィードバックを確認できます",
     "selectSession": "セッションを選択",
     "pleaseSelectSession": "-- セッションを選択してください --",
     "selectSessionPrompt": "セッションを選択してください",
