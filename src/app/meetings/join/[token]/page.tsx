@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ViewerSessionPanel } from "@/components/ViewerSessionPanel";
 import Link from "next/link";
 
@@ -16,6 +17,7 @@ type Meeting = {
 };
 
 export default function ViewerJoinPage() {
+  const t = useTranslations();
   const params = useParams();
   const searchParams = useSearchParams();
   const token = params.token as string;
@@ -192,7 +194,7 @@ export default function ViewerJoinPage() {
           <div className="flex-1">
             <div className="flex items-center gap-3">
               <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                📖 閲覧モード
+                📖 {t('liveSession.viewer.viewerMode')}
               </span>
               <h1 className="text-xl font-bold text-zinc-900">
                 {meeting.title}

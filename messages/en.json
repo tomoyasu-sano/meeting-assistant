@@ -236,6 +236,18 @@
       "history": "History",
       "evaluation": "Evaluation"
     },
+    "viewer": {
+      "viewerMode": "Viewer Mode",
+      "viewOnlyMode": "View Only",
+      "viewingMeeting": "You are viewing this meeting. Session controls are not available.",
+      "discussionAssistReadOnly": "Discussion Assist (View Only)",
+      "canViewHostConversation": "You can view the host's AI conversation. Please ask questions through the host.",
+      "waitingForHost": "Messages will appear here when the host starts a conversation with AI",
+      "askHostToQuestion": "💡 If you have questions, let the host know so they can ask the AI",
+      "host": "Host",
+      "checkpoint": "Checkpoint",
+      "readOnlyModeNote": "This is view-only mode. Please direct AI questions through the host."
+    },
     "loadingModal": {
       "title": "Loading...",
       "preparingSession": "Preparing meeting session",

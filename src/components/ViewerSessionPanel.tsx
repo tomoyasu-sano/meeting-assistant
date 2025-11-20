@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { TermExplanationPane, TermExplanationPaneRef, TermCard } from "@/components/TermExplanationPane";
 import { HistoryTab } from "@/components/HistoryTab";
 import { EvaluationTab } from "@/components/EvaluationTab";
@@ -36,6 +37,8 @@ type Session = {
 };
 
 export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
+  const t = useTranslations();
+
   // タブ切り替え状態
   const [activeTab, setActiveTab] = useState<'discussionAssist' | 'history' | 'evaluation' | 'terms' | 'transcripts'>('discussionAssist');
 
@@ -146,16 +149,16 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
               </span>
               <div>
                 <p className="font-semibold text-blue-900">
-                  閲覧モード
+                  {t('liveSession.viewer.viewerMode')}
                 </p>
                 <p className="text-sm text-blue-700">
-                  この会議を閲覧しています。セッションの操作はできません。
+                  {t('liveSession.viewer.viewingMeeting')}
                 </p>
               </div>
               {sessionStatus === 'active' && (
                 <span className="ml-auto inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                  進行中
+                  {t('meeting.status.inProgress')}
                 </span>
               )}
             </div>
@@ -390,15 +393,15 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-lg font-semibold text-zinc-900">
-                        議論アシスト（閲覧専用）
+                        {t('liveSession.viewer.discussionAssistReadOnly')}
                       </h2>
                       <p className="mt-1 text-sm text-zinc-600">
-                        ホストのAI会話を閲覧できます。質問はホストを通じて行ってください。
+                        {t('liveSession.viewer.canViewHostConversation')}
                       </p>
                     </div>
                     <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
                       <span className="text-sm">📖</span>
-                      閲覧専用
+                      {t('liveSession.viewer.viewOnlyMode')}
                     </span>
                   </div>
                 </div>
@@ -408,10 +411,10 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
                     <div className="flex h-full items-center justify-center text-center">
                       <div className="max-w-md">
                         <p className="text-sm text-zinc-500">
-                          ホストがAIと会話を始めると、ここに表示されます
+                          {t('liveSession.viewer.waitingForHost')}
                         </p>
                         <p className="mt-2 text-xs text-zinc-400">
-                          💡 質問がある場合は、ホストに伝えてAIに質問してもらいましょう
+                          {t('liveSession.viewer.askHostToQuestion')}
                         </p>
                       </div>
                     </div>
@@ -432,14 +435,14 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
                         >
                           <div className="mb-1 flex items-center gap-2">
                             <span className="text-xs font-medium opacity-75">
-                              {message.role === "user" ? "ホスト" : "AI"}
+                              {message.role === "user" ? t('liveSession.viewer.host') : "AI"}
                             </span>
                             {message.metadata?.type === "checkpoint" && (
                               <>
                                 <span className="text-xs opacity-50">•</span>
                                 <span className="inline-flex items-center gap-1 text-xs opacity-75">
                                   <span className="inline-block w-1.5 h-1.5 bg-current rounded-full"></span>
-                                  チェックポイント
+                                  {t('liveSession.viewer.checkpoint')}
                                 </span>
                               </>
                             )}
@@ -465,7 +468,7 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
                   <div className="flex items-center gap-2 text-sm text-zinc-600">
                     <span className="text-lg">🔒</span>
                     <p>
-                      閲覧専用モードです。AIへの質問はホストを通じて行ってください。
+                      {t('liveSession.viewer.readOnlyModeNote')}
                     </p>
                   </div>
                 </div>

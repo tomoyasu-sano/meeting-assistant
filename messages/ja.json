@@ -236,6 +236,18 @@
       "history": "過去履歴",
       "evaluation": "評価"
     },
+    "viewer": {
+      "viewerMode": "閲覧モード",
+      "viewOnlyMode": "閲覧専用",
+      "viewingMeeting": "この会議を閲覧しています。セッションの操作はできません。",
+      "discussionAssistReadOnly": "議論アシスト（閲覧専用）",
+      "canViewHostConversation": "ホストのAI会話を閲覧できます。質問はホストを通じて行ってください。",
+      "waitingForHost": "ホストがAIと会話を始めると、ここに表示されます",
+      "askHostToQuestion": "💡 質問がある場合は、ホストに伝えてAIに質問してもらいましょう",
+      "host": "ホスト",
+      "checkpoint": "チェックポイント",
+      "readOnlyModeNote": "閲覧専用モードです。AIへの質問はホストを通じて行ってください。"
+    },
     "loadingModal": {
       "title": "読み込み中...",
       "preparingSession": "会議セッションを準備中",
