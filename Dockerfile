@@ -31,6 +31,16 @@ COPY . .
 # Disable telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Set dummy environment variables for build time
+# These will be overridden by Cloud Run environment variables at runtime
+ENV OPENAI_API_KEY="dummy-key-for-build"
+ENV GOOGLE_API_KEY="dummy-key-for-build"
+ENV NEXT_PUBLIC_SUPABASE_URL="https://dummy.supabase.co"
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY="dummy-key-for-build"
+ENV SUPABASE_SERVICE_ROLE_KEY="dummy-key-for-build"
+ENV GOOGLE_CLOUD_PROJECT="meeting-supporter"
+ENV GOOGLE_CLOUD_REGION="us-central1"
+
 RUN npm run build
 
 # ===========================
