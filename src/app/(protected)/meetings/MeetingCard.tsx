@@ -87,7 +87,8 @@ export function MeetingCard({ meeting }: { meeting: Meeting }) {
           </div>
         )}
 
-      {/* 参加リンク */}
+      {/* 参加リンク - マスク中（会議詳細ページで共有するため不要） */}
+      {false && (
       <div className="mb-4 rounded-lg bg-zinc-50 p-3">
         <p className="text-xs font-medium text-zinc-700">{t('meeting.joinToken')}</p>
         <code className="mt-1 block break-all text-xs text-zinc-600">
@@ -99,6 +100,7 @@ export function MeetingCard({ meeting }: { meeting: Meeting }) {
           </p>
         )}
       </div>
+      )}
 
       {/* アクションボタン */}
       <div className="mb-4 flex gap-2">
