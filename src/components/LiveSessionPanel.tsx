@@ -9,7 +9,7 @@ import { LoadingModal } from "@/components/LoadingModal";
 import SessionSummary from "@/components/SessionSummary";
 import { AIResponseRecorder } from "@/lib/ai/ai-message-recorder";
 import type { AIMode } from "@/lib/ai/ai-message-recorder";
-import { TermExplanationPane, TermExplanationPaneRef } from "@/components/TermExplanationPane";
+import { TermExplanationPane, TermExplanationPaneRef, TermCard } from "@/components/TermExplanationPane";
 import { HistoryTab } from "@/components/HistoryTab";
 import { EvaluationTab } from "@/components/EvaluationTab";
 import ReactMarkdown from "react-markdown";
@@ -96,7 +96,7 @@ export function LiveSessionPanel({
   const [lastTranscriptAt, setLastTranscriptAt] = useState<Date | null>(null);
 
   // タブ切り替え状態
-  const [activeTab, setActiveTab] = useState<'transcript' | 'ai' | 'discussionAssist' | 'history' | 'evaluation'>('ai');
+  const [activeTab, setActiveTab] = useState<'transcript' | 'ai' | 'discussionAssist' | 'history' | 'evaluation' | 'terms' | 'transcripts'>('discussionAssist');
 
   // Gemini Live API state
   const [isGeminiActive, setIsGeminiActive] = useState(false);
@@ -111,6 +111,9 @@ export function LiveSessionPanel({
   const terminologyLastResponseRef = useRef("");
   const meetingSummaryContextRef = useRef<string>("");
   const meetingSummaryContextLoadedRef = useRef(false);
+
+  // Term cards state (synced from TermExplanationPane for mobile display)
+  const [termCards, setTermCards] = useState<TermCard[]>([]);
 
   // AI Response Recorder（統一保存レイヤー）
   const geminiLiveRecorderRef = useRef<AIResponseRecorder | null>(null);
@@ -2151,6 +2154,8 @@ export function LiveSessionPanel({
             )}
           </button>
           )}
+          {/* AIアシスタントタブ - 一時的にマスク（将来使用予定） */}
+          {false && (
           <button
             role="tab"
             aria-selected={activeTab === 'ai'}
@@ -2171,6 +2176,7 @@ export function LiveSessionPanel({
               <span className="ml-2 inline-block w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
             )}
           </button>
+          )}
           <button
             role="tab"
             aria-selected={activeTab === 'discussionAssist'}
@@ -2227,6 +2233,42 @@ export function LiveSessionPanel({
           >
             会議評価
           </button>
+          {/* モバイル専用タブ: 用語解説 (PCでは右ペインで表示) */}
+          <button
+            role="tab"
+            aria-selected={activeTab === 'terms'}
+            aria-controls="terms-panel"
+            onClick={() => setActiveTab('terms')}
+            className={`
+              lg:hidden px-6 py-3 rounded-t-lg text-sm font-medium transition-all duration-150
+              focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+              ${
+                activeTab === 'terms'
+                  ? 'bg-white text-indigo-600 border-t-2 border-x-2 border-indigo-600 border-b-white'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+              }
+            `}
+          >
+            用語解説
+          </button>
+          {/* モバイル専用タブ: 文字起こし (PCでは右ペインで表示) */}
+          <button
+            role="tab"
+            aria-selected={activeTab === 'transcripts'}
+            aria-controls="transcripts-panel"
+            onClick={() => setActiveTab('transcripts')}
+            className={`
+              lg:hidden px-6 py-3 rounded-t-lg text-sm font-medium transition-all duration-150
+              focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+              ${
+                activeTab === 'transcripts'
+                  ? 'bg-white text-indigo-600 border-t-2 border-x-2 border-indigo-600 border-b-white'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+              }
+            `}
+          >
+            文字起こし
+          </button>
         </nav>
       </div>
 
@@ -2238,6 +2280,111 @@ export function LiveSessionPanel({
       ) : activeTab === 'evaluation' ? (
         <div className="h-[calc(100vh-180px)]">
           <EvaluationTab meetingId={meetingId} />
+        </div>
+      ) : activeTab === 'terms' ? (
+        <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white h-[calc(100vh-180px)] lg:hidden">
+          <div
+            role="tabpanel"
+            id="terms-panel"
+            aria-labelledby="terms-tab"
+            className="flex flex-col h-full"
+          >
+            <div className="border-b border-zinc-200 px-6 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-zinc-900">
+                  用語解説
+                </h2>
+                <p className="mt-1 text-sm text-zinc-600">
+                  会議中に出た専門用語を自動で解説します
+                </p>
+              </div>
+            </div>
+            <div className="flex-1 space-y-3 overflow-y-auto p-4">
+              {termCards.length === 0 ? (
+                <div className="flex h-full items-center justify-center text-center">
+                  <p className="text-sm text-zinc-500">
+                    会議中に出た用語はこちらに表示されます
+                  </p>
+                </div>
+              ) : (
+                termCards.map((card) => (
+                  <div
+                    key={card.id}
+                    className="rounded-lg border border-indigo-200 bg-indigo-50 p-4"
+                  >
+                    <div className="flex items-start justify-between">
+                      <h3 className="text-lg font-semibold text-indigo-900">
+                        {card.term}
+                      </h3>
+                      <span className="text-xs text-zinc-500">
+                        {new Date(card.timestamp).toLocaleTimeString("ja-JP")}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-zinc-700">
+                      {card.description}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      ) : activeTab === 'transcripts' ? (
+        <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white h-[calc(100vh-180px)] lg:hidden">
+          <div
+            role="tabpanel"
+            id="transcripts-panel"
+            aria-labelledby="transcripts-tab"
+            className="flex flex-col h-full"
+          >
+            <div className="border-b border-zinc-200 px-6 py-4">
+              <div>
+                <h2 className="text-lg font-semibold text-zinc-900">
+                  文字起こし
+                </h2>
+                <p className="mt-1 text-sm text-zinc-600">
+                  会議の発言がリアルタイムで表示されます
+                </p>
+              </div>
+            </div>
+            <div className="flex-1 space-y-3 overflow-y-auto p-4">
+              {transcripts.length === 0 ? (
+                <div className="flex h-full items-center justify-center text-center">
+                  <p className="text-sm text-zinc-500">
+                    会議中の発言はこちらに表示されます
+                  </p>
+                </div>
+              ) : (
+                transcripts.map((transcript) => (
+                  <div
+                    key={transcript.id}
+                    className={`rounded-lg border p-4 ${
+                      transcript.isFinal
+                        ? "border-blue-200 bg-blue-50"
+                        : "border-zinc-200 bg-zinc-50"
+                    }`}
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-semibold text-zinc-900">
+                        {transcript.speaker}
+                        {!transcript.isFinal && (
+                          <span className="ml-2 text-xs text-zinc-500">
+                            (認識中...)
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-xs text-zinc-500">
+                        {transcript.startTime !== undefined
+                          ? `${Math.floor(transcript.startTime / 60)}:${String(Math.floor(transcript.startTime % 60)).padStart(2, "0")}`
+                          : ""}
+                      </span>
+                    </div>
+                    <p className="text-sm text-zinc-700">{transcript.text}</p>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </div>
       ) : (
       <div className="flex flex-col rounded-2xl border border-zinc-200 bg-white h-[calc(100vh-180px)]">
@@ -2696,6 +2843,7 @@ export function LiveSessionPanel({
           transcripts={transcripts}
           sessionStartTime={elapsedTime}
           industries={industries}
+          onTermCardsChange={setTermCards}
         />
       </div>
       {/* flex container 終了 */}

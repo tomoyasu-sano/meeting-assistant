@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from "react";
 import { getIndustryLabels } from "@/lib/constants/industries";
 
-type TermCard = {
+export type TermCard = {
   id: string;
   term: string;
   description: string;
@@ -16,7 +16,7 @@ type TermCard = {
   };
 };
 
-type Transcript = {
+export type Transcript = {
   id: string;
   speaker: string;
   text: string;
@@ -32,14 +32,18 @@ type TermExplanationPaneProps = {
   transcripts: Transcript[];
   sessionStartTime?: number;
   industries?: string[];
+  onTermCardsChange?: (termCards: TermCard[]) => void;
 };
 
 export type TermExplanationPaneRef = {
   sendTranscript: (text: string) => void;
+  termCards: TermCard[];
+  activeTab: "terms" | "transcripts";
+  setActiveTab: (tab: "terms" | "transcripts") => void;
 };
 
 export const TermExplanationPane = forwardRef<TermExplanationPaneRef, TermExplanationPaneProps>(
-  ({ meetingId, sessionId, isSessionActive, transcripts, sessionStartTime, industries = [] }, ref) => {
+  ({ meetingId, sessionId, isSessionActive, transcripts, sessionStartTime, industries = [], onTermCardsChange }, ref) => {
     const [activeTab, setActiveTab] = useState<"terms" | "transcripts">("terms");
     const [termCards, setTermCards] = useState<TermCard[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -171,7 +175,10 @@ export const TermExplanationPane = forwardRef<TermExplanationPaneRef, TermExplan
     // 外部に公開
     useImperativeHandle(ref, () => ({
       sendTranscript,
-    }));
+      termCards,
+      activeTab,
+      setActiveTab,
+    }), [sendTranscript, termCards, activeTab]);
 
     /**
      * WebSocket接続
@@ -556,6 +563,13 @@ ${industryContext}
       };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isSessionActive, sessionId]);
+
+    // termCards が変更されたら親に通知
+    useEffect(() => {
+      if (onTermCardsChange) {
+        onTermCardsChange(termCards);
+      }
+    }, [termCards, onTermCardsChange]);
 
     return (
       <div className="hidden h-full w-full flex-col border-l border-zinc-200 bg-white lg:flex lg:w-1/4">
