@@ -1735,6 +1735,27 @@ export function LiveSessionPanel({
       };
       setAssistMessages((prev) => [...prev, userMsg]);
 
+      // ユーザーメッセージをデータベースに保存
+      if (currentSession) {
+        try {
+          await fetch(`/api/meetings/${meetingId}/ai-messages`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sessionId: currentSession.id,
+              content: userMessage,
+              source: "participation",
+              provider: "openai_discussion",
+              mode: "assistant",
+              turnId: userMsg.id,
+            }),
+          });
+          console.log("[Discussion Chat] User message saved to database");
+        } catch (saveError) {
+          console.error("[Discussion Chat] Failed to save user message:", saveError);
+        }
+      }
+
       // 最後の要約以降のtranscriptsを取得
       const recentTranscripts = transcripts.filter((t) => {
         if (!t.timestamp || !t.isFinal) return false;
@@ -1877,6 +1898,27 @@ export function LiveSessionPanel({
                 console.log("[OpenAI Discussion] Stream completed", {
                   finalLength: fullText.length,
                 });
+
+                // データベースに保存（議論アシストメッセージ）
+                if (currentSession && fullText.trim()) {
+                  try {
+                    await fetch(`/api/meetings/${meetingId}/ai-messages`, {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        sessionId: currentSession.id,
+                        content: fullText,
+                        source: "response",
+                        provider: "openai_discussion",
+                        mode: params.isCheckpoint ? "checkpoint" : "assistant",
+                        turnId: messageId,
+                      }),
+                    });
+                    console.log("[OpenAI Discussion] Saved to database", { messageId });
+                  } catch (saveError) {
+                    console.error("[OpenAI Discussion] Failed to save to database:", saveError);
+                  }
+                }
               } else if (data.type === "error") {
                 console.error("[OpenAI Discussion] Stream error:", data.error);
                 throw new Error(data.error);

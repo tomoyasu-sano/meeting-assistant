@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { TermExplanationPane, TermExplanationPaneRef, TermCard } from "@/components/TermExplanationPane";
 import { HistoryTab } from "@/components/HistoryTab";
 import { EvaluationTab } from "@/components/EvaluationTab";
+import ReactMarkdown from "react-markdown";
 
 type Transcript = {
   id: string;
@@ -19,6 +20,11 @@ type AssistMessage = {
   role: "user" | "assistant";
   content: string;
   timestamp: string;
+  metadata?: {
+    type?: "checkpoint" | undefined;
+    provider?: string;
+    mode?: string;
+  };
 };
 
 type Session = {
@@ -136,7 +142,7 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
           <div className="mb-4 rounded-2xl border border-blue-200 bg-blue-50 px-6 py-4 shadow-sm">
             <div className="flex items-center gap-3">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-lg">
-                👁️
+                📖
               </span>
               <div>
                 <p className="font-semibold text-blue-900">
@@ -391,7 +397,7 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
                       </p>
                     </div>
                     <span className="inline-flex items-center gap-2 rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                      <span className="text-sm">👁️</span>
+                      <span className="text-sm">📖</span>
                       閲覧専用
                     </span>
                   </div>
@@ -428,11 +434,26 @@ export function ViewerSessionPanel({ meetingId }: { meetingId: string }) {
                             <span className="text-xs font-medium opacity-75">
                               {message.role === "user" ? "ホスト" : "AI"}
                             </span>
+                            {message.metadata?.type === "checkpoint" && (
+                              <>
+                                <span className="text-xs opacity-50">•</span>
+                                <span className="inline-flex items-center gap-1 text-xs opacity-75">
+                                  <span className="inline-block w-1.5 h-1.5 bg-current rounded-full"></span>
+                                  チェックポイント
+                                </span>
+                              </>
+                            )}
                             <span className="text-xs opacity-50">
                               {new Date(message.timestamp).toLocaleTimeString("ja-JP")}
                             </span>
                           </div>
-                          <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                          {message.role === "assistant" ? (
+                            <div className="text-sm leading-relaxed prose prose-sm max-w-none prose-headings:text-zinc-900 prose-p:text-zinc-700 prose-strong:text-zinc-900 prose-ul:text-zinc-700">
+                              <ReactMarkdown>{message.content}</ReactMarkdown>
+                            </div>
+                          ) : (
+                            <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                          )}
                         </div>
                       </div>
                     ))

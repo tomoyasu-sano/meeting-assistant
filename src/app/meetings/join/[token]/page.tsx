@@ -192,7 +192,7 @@ export default function ViewerJoinPage() {
           <div className="flex-1">
             <div className="flex items-center gap-3">
               <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                👁️ 閲覧モード
+                📖 閲覧モード
               </span>
               <h1 className="text-xl font-bold text-zinc-900">
                 {meeting.title}
