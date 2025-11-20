@@ -31,12 +31,13 @@ COPY . .
 # Disable telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Set dummy environment variables for build time
-# These will be overridden by Cloud Run environment variables at runtime
+# Set environment variables for build time
+# NEXT_PUBLIC_* variables are embedded in the client-side code at build time
+# Other variables can be overridden by Cloud Run at runtime
 ENV OPENAI_API_KEY="dummy-key-for-build"
 ENV GOOGLE_API_KEY="dummy-key-for-build"
-ENV NEXT_PUBLIC_SUPABASE_URL="https://dummy.supabase.co"
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY="dummy-key-for-build"
+ENV NEXT_PUBLIC_SUPABASE_URL="https://hmqtyhyzueehwhcfkgld.supabase.co"
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtcXR5aHl6dWVlaHdoY2ZrZ2xkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyNTEzNzgsImV4cCI6MjA3NzgyNzM3OH0.Z8oaU_L1FVZpDTCr7URnq4-n9qrw2YYrK-wv6sRsA_Y"
 ENV SUPABASE_SERVICE_ROLE_KEY="dummy-key-for-build"
 ENV GOOGLE_CLOUD_PROJECT="meeting-supporter"
 ENV GOOGLE_CLOUD_REGION="us-central1"
