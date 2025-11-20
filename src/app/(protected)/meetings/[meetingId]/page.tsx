@@ -273,10 +273,10 @@ export default async function MeetingDetailPage({
           <div className="mt-3 rounded-xl bg-gradient-to-r from-indigo-50/50 to-purple-50/50 border border-indigo-100 p-5">
             <div className="flex items-center gap-3">
               <code className="flex-1 break-all text-sm font-mono text-indigo-700 bg-white px-3 py-2 rounded-lg">
-                {`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3500"}/meetings/join/${meeting.join_token}`}
+                {`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3500"}/meetings/join/${meeting.join_token}`}
               </code>
               <CopyButton
-                text={`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3500"}/meetings/join/${meeting.join_token}`}
+                text={`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3500"}/meetings/join/${meeting.join_token}`}
                 successMessage={t('common.urlCopied')}
               />
             </div>
