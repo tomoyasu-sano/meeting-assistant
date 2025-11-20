@@ -187,32 +187,28 @@ export default function ViewerJoinPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* ヘッダー */}
-      <header className="border-b border-zinc-200 bg-white">
+      <header className="border-b border-zinc-200 bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                閲覧モード
+            <div className="flex items-center gap-3">
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                👁️ 閲覧モード
               </span>
-              <h1 className="text-lg font-semibold text-zinc-900">
+              <h1 className="text-xl font-bold text-zinc-900">
                 {meeting.title}
               </h1>
             </div>
-            <p className="mt-1 text-xs text-zinc-600">
-              {meeting.category.title}
+            <p className="mt-1 text-sm text-zinc-600">
+              📂 {meeting.category.title}
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
+              className="rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
             >
               ログイン
             </Link>
-            <span className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-              接続中
-            </span>
           </div>
         </div>
       </header>
