@@ -109,7 +109,7 @@
     "scheduledDateTime": "開催日時",
     "scheduledDateTimeRequired": "開催日時 *",
     "joinPassword": "参加パスワード（オプション）",
-    "joinPasswordPlaceholder": "未設定の場合はトークンのみで参加可能",
+    "joinPasswordPlaceholder": "未設定の場合、共有したURLからパスワードなしで参加できます",
     "selectParticipants": "参加者を選択",
     "noParticipantsRegistered": "参加者が登録されていません",
     "createMeeting": "会議を作成",

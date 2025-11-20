@@ -109,7 +109,7 @@
     "scheduledDateTime": "Scheduled Date/Time",
     "scheduledDateTimeRequired": "Scheduled Date/Time *",
     "joinPassword": "Join Password (Optional)",
-    "joinPasswordPlaceholder": "If not set, only token is required to join",
+    "joinPasswordPlaceholder": "If not set, anyone with the shared URL can join without a password",
     "selectParticipants": "Select Participants",
     "noParticipantsRegistered": "No participants registered",
     "createMeeting": "Create Meeting",
