@@ -68,6 +68,13 @@ export class GeminiEvaluationProvider implements EvaluationProvider {
         model: evaluationModel,
       });
 
+      // プロンプトをログ出力
+      console.log('\n========================================');
+      console.log('[Evaluation] 📝 PROMPT:');
+      console.log('========================================');
+      console.log(prompt);
+      console.log('========================================\n');
+
       const result = await generativeModel.generateContent({
         contents: [
           {
@@ -105,7 +112,7 @@ export class GeminiEvaluationProvider implements EvaluationProvider {
     participantCount: number,
     durationMinutes: number
   ): string {
-    return `あなたは介護サービス会議の評価を行う専門アシスタントです。会議の文字起こしログから、次回より良い会議につなげるための建設的な評価を生成してください。
+    return `あなたは会議の評価を行う専門アシスタントです。会議の文字起こしログから、次回より良い会議につなげるための建設的な評価を作成してください。
 
 **重要な前提**:
 - この評価は全参加者が見ることができます

@@ -27,6 +27,17 @@ type RequestBody = {
   meetingInfo?: { title: string; purpose: string };
   history?: Message[];
   userMessage?: string;
+  pastSessionSummaries?: Array<{
+    sessionId: string;
+    title: string;
+    summaryText: string;
+    keyDecisions: any[];
+    actionItems: any[];
+    topicsDiscussed: string[];
+    participantCount: number | null;
+    durationSeconds: number | null;
+    occurredAt: string;
+  }>;
 };
 
 export async function POST(request: NextRequest) {
@@ -39,17 +50,67 @@ export async function POST(request: NextRequest) {
       meetingInfo,
       history = [],
       userMessage,
+      pastSessionSummaries = [],
     }: RequestBody = await request.json();
 
     console.log("[OpenAI Discussion] Request received", {
       mode,
       transcriptLength: transcriptChunk?.length,
       historyLength: history.length,
+      pastSessionsCount: pastSessionSummaries.length,
     });
 
     // システムプロンプト
-    const systemPrompt = `あなたは会議に参加している後輩です。議論を整理し、抜け漏れや次のアクションを提案します。
+    const systemPrompt = `あなたは会議を支援するAIです。議論を整理し、抜け漏れや次のアクションを提案します。
 返答は日本語で、必ず礼儀正しく、前向きなトーンにしてください。`;
+
+    // 過去履歴セクション構築
+    const pastHistorySection = pastSessionSummaries.length > 0
+      ? `# 過去の会議履歴（参考情報）\n${pastSessionSummaries
+          .map((s, i) => {
+            const date = new Date(s.occurredAt).toLocaleString("ja-JP", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            });
+
+            // 参加者数と時間の情報を追加
+            const metaInfo = [];
+            if (s.participantCount) metaInfo.push(`参加者: ${s.participantCount}名`);
+            if (s.durationSeconds) metaInfo.push(`時間: ${Math.floor(s.durationSeconds / 60)}分`);
+            const metaText = metaInfo.length > 0 ? ` (${metaInfo.join(', ')})` : '';
+
+            // サマリーテキスト
+            let summaryContent = `**要約**\n${s.summaryText}`;
+
+            // 決定事項
+            if (s.keyDecisions && s.keyDecisions.length > 0) {
+              summaryContent += `\n\n**決定事項**\n${s.keyDecisions
+                .map((d: any) => `- ${d.decision}${d.context ? ` (${d.context})` : ''}`)
+                .join('\n')}`;
+            }
+
+            // アクションアイテム
+            if (s.actionItems && s.actionItems.length > 0) {
+              summaryContent += `\n\n**アクション項目**\n${s.actionItems
+                .map((a: any) => {
+                  let item = `- ${a.item}`;
+                  if (a.assignee) item += ` [担当: ${a.assignee}]`;
+                  if (a.deadline) item += ` [期限: ${a.deadline}]`;
+                  return item;
+                })
+                .join('\n')}`;
+            }
+
+            // 議論されたトピック
+            if (s.topicsDiscussed && s.topicsDiscussed.length > 0) {
+              summaryContent += `\n\n**議論トピック**\n${s.topicsDiscussed.map((t: string) => `- ${t}`).join('\n')}`;
+            }
+
+            return `## 過去会議${i + 1}: ${s.title} (${date})${metaText}\n${summaryContent}`;
+          })
+          .join("\n\n")}\n\n`
+      : "";
 
     // プロンプト構築
     let userPrompt = "";
@@ -60,7 +121,7 @@ export async function POST(request: NextRequest) {
         ? `# 既存の要約/抜け漏れ\n${history.map((h, i) => `${i + 1}) ${h.text}`).join("\n\n")}\n\n`
         : "";
 
-      userPrompt = `${historyText}# ここまでの議事録
+      userPrompt = `${pastHistorySection}${historyText}# ここまでの議事録
 ${transcriptChunk || "（まだ議事録がありません）"}
 
 # 会議の情報
@@ -82,9 +143,18 @@ ${transcriptChunk || "（まだ議事録がありません）"}
         ? `# 最後の要約以降の会話テキスト\n${transcriptChunk}\n\n`
         : "";
 
-      userPrompt = `${recentSummary}${recentTranscripts}# ユーザー指示
+      userPrompt = `${pastHistorySection}${recentSummary}${recentTranscripts}# ユーザー指示
 ${userMessage}`;
     }
+
+    // プロンプトをログ出力
+    console.log('\n========================================');
+    console.log('[Discussion Assist] 📝 PROMPT:');
+    console.log('========================================');
+    console.log('SYSTEM:', systemPrompt);
+    console.log('---');
+    console.log('USER:', userPrompt);
+    console.log('========================================\n');
 
     // OpenAI API 呼び出し（ストリーミング）
     const stream = await openai.chat.completions.create({

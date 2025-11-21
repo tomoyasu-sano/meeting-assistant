@@ -66,6 +66,13 @@ export class GeminiSummaryProvider implements SummaryProvider {
         model: summaryModel,
       });
 
+      // プロンプトをログ出力
+      console.log('\n========================================');
+      console.log('[Summary] 📝 PROMPT:');
+      console.log('========================================');
+      console.log(prompt);
+      console.log('========================================\n');
+
       const result = await generativeModel.generateContent({
         contents: [
           {
@@ -98,9 +105,9 @@ export class GeminiSummaryProvider implements SummaryProvider {
   }
 
   private buildPrompt(conversationText: string, meetingTitle?: string): string {
-    return `あなたは介護サービス会議の要約を作成する専門アシスタントです。以下の会議の文字起こしログから、構造化された要約を生成してください。
+    return `以下の会議の文字起こしログ（会議ログ）から、構造化された要約（JSON形式）を作成してください。
 
-**会議タイトル**: ${meetingTitle || '介護サービス会議'}
+**会議タイトル**: ${meetingTitle || '会議'}
 
 **会議ログ**:
 ${conversationText}
@@ -134,8 +141,7 @@ ${conversationText}
 - summaryTextは簡潔に、かつ重要なポイントを網羅してください
 - keyDecisionsには明確に決定された事項のみを含めてください
 - actionItemsには具体的な行動が必要な項目のみを含めてください
-- topicsDiscussedには会議で話し合われた主要なテーマを列挙してください
-- 参加者のプライバシーに配慮し、不要な個人情報は含めないでください`;
+- topicsDiscussedには会議で話し合われた主要なテーマを列挙してください`;
   }
 
   private parseResponse(text: string): SummaryResult {

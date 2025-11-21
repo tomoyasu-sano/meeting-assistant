@@ -129,6 +129,17 @@ export function LiveSessionPanel({
   const assistMessagesEndRef = useRef<HTMLDivElement>(null);
   const [assistInput, setAssistInput] = useState("");
   const [isSendingChat, setIsSendingChat] = useState(false);
+  const [pastSessionSummaries, setPastSessionSummaries] = useState<Array<{
+    sessionId: string;
+    title: string;
+    summaryText: string;
+    keyDecisions: any[];
+    actionItems: any[];
+    topicsDiscussed: string[];
+    participantCount: number | null;
+    durationSeconds: number | null;
+    occurredAt: string;
+  }>>([]);
 
   // ローディングモーダル用の状態
   type LoadingStep = {
@@ -997,8 +1008,11 @@ export function LiveSessionPanel({
       setAIMessages([]); // AIメッセージもリセット
       setTerminologyMessages([]);
       setAssistMessages([]); // 議論アシストメッセージもリセット
-      setLastSummaryTimestamp(data.session.started_at); // 議論整理の起点を設定
+      setLastSummaryTimestamp(data.session.started_at); // 議論整理の起点を設定（チャット初回から使用可能に）
       setLastTranscriptAt(new Date()); // 自動終了タイマーを開始
+
+      // 過去3回分のセッションサマリーを取得
+      fetchPastSessionSummaries();
 
       // AIResponseRecorderを初期化
       geminiLiveRecorderRef.current = new AIResponseRecorder(
@@ -1633,6 +1647,64 @@ export function LiveSessionPanel({
   }, [assistMessages]);
 
   /**
+   * 過去3回分のセッションサマリーを取得
+   */
+  const fetchPastSessionSummaries = async () => {
+    try {
+      console.log("[Past History] Fetching past session summaries...");
+
+      // 過去のセッション履歴を取得（最大3回分）
+      const response = await fetch(
+        `/api/meetings/${meetingId}/history?range=3`
+      );
+
+      if (!response.ok) {
+        console.error("[Past History] Failed to fetch sessions");
+        return;
+      }
+
+      const data = await response.json();
+      const sessions = data.sessions || [];
+
+      console.log("[Past History] Found sessions:", sessions.length);
+
+      // 各セッションのサマリーを取得
+      const summaries = [];
+      for (const session of sessions.slice(0, 3)) {
+        try {
+          const summaryRes = await fetch(
+            `/api/meetings/${meetingId}/history/${session.sessionId}/summary`
+          );
+
+          if (summaryRes.ok) {
+            const summaryData = await summaryRes.json();
+            if (summaryData.summary) {
+              summaries.push({
+                sessionId: session.sessionId,
+                title: session.title,
+                summaryText: summaryData.summary.summary_text,
+                keyDecisions: summaryData.summary.key_decisions || [],
+                actionItems: summaryData.summary.action_items || [],
+                topicsDiscussed: summaryData.summary.topics_discussed || [],
+                participantCount: summaryData.summary.participant_count || null,
+                durationSeconds: summaryData.summary.duration_seconds || null,
+                occurredAt: summaryData.summary.generated_at || session.occurredAt,
+              });
+            }
+          }
+        } catch (error) {
+          console.error(`[Past History] Failed to fetch summary for session ${session.sessionId}:`, error);
+        }
+      }
+
+      setPastSessionSummaries(summaries);
+      console.log("[Past History] Loaded summaries:", summaries.length);
+    } catch (error) {
+      console.error("[Past History] Error fetching past summaries:", error);
+    }
+  };
+
+  /**
    * 議論整理ハンドラ
    */
   const handleSummarizeDiscussion = async () => {
@@ -1829,6 +1901,7 @@ export function LiveSessionPanel({
         meetingInfo: params.meetingInfo,
         history: params.history,
         userMessage: params.userMessage,
+        pastSessionSummaries, // 過去履歴を追加
       }),
     });
 
