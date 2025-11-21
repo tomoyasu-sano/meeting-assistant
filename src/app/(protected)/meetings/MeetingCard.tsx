@@ -106,7 +106,7 @@ export function MeetingCard({ meeting }: { meeting: Meeting }) {
       <div className="mb-4 flex gap-2">
         <Link
           href={`/meetings/${meeting.id}`}
-          className="flex-1 rounded-lg bg-cyan-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-cyan-700"
+          className="flex-1 rounded-lg border-2 border-indigo-600 bg-white px-4 py-2 text-center text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
         >
           {t('meeting.viewDetails')}
         </Link>

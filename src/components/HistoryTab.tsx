@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from 'next-intl';
 import type {
   HistorySession,
   SessionSummary,
@@ -13,6 +14,7 @@ type HistoryTabProps = {
 };
 
 export function HistoryTab({ meetingId }: HistoryTabProps) {
+  const t = useTranslations();
   const [sessions, setSessions] = useState<HistorySession[]>([]);
   const [selectedSessionIds, setSelectedSessionIds] = useState<string[]>([]);
   const [visibleSummaries, setVisibleSummaries] = useState<
@@ -187,9 +189,9 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
     <div className="flex flex-col h-full">
       {/* ヘッダー */}
       <div className="border-b border-zinc-200 px-6 py-4">
-        <h2 className="text-lg font-semibold text-zinc-900">過去履歴</h2>
+        <h2 className="text-lg font-semibold text-zinc-900">{t('history.title')}</h2>
         <p className="mt-1 text-sm text-zinc-600">
-          過去に開催したセッションのサマリーと文字起こしを確認できます
+          {t('history.description')}
         </p>
       </div>
 
@@ -200,29 +202,29 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
             onClick={() => selectRecent(1)}
             className="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50"
           >
-            直近1回
+            {t('history.mostRecent')}
           </button>
           <button
             onClick={() => selectRecent(3)}
             className="px-3 py-1.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50"
           >
-            直近3回
+            {t('history.lastThree')}
           </button>
           <button
             onClick={showSummaries}
             disabled={selectedSessionIds.length === 0}
             className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:bg-zinc-300 disabled:cursor-not-allowed"
           >
-            サマリーを表示
+            {t('history.showSummaries')}
           </button>
         </div>
 
         {/* セッション選択リスト */}
         {isLoading ? (
-          <div className="text-sm text-zinc-600">読み込み中...</div>
+          <div className="text-sm text-zinc-600">{t('common.loading')}</div>
         ) : sessions.length === 0 ? (
           <div className="text-sm text-zinc-600">
-            過去履歴はまだありません
+            {t('history.noPastHistory')}
           </div>
         ) : (
           <div className="space-y-2">
@@ -247,9 +249,9 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
                 </div>
                 <div className="text-xs">
                   {session.summaryStatus === "ready" ? (
-                    <span className="text-green-600">サマリー有</span>
+                    <span className="text-green-600">{t('history.summaryAvailable')}</span>
                   ) : (
-                    <span className="text-zinc-400">未生成</span>
+                    <span className="text-zinc-400">{t('history.notGenerated')}</span>
                   )}
                 </div>
               </label>
@@ -262,7 +264,7 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
       <div className="flex-1 overflow-y-auto px-6 py-4">
         {Object.keys(visibleSummaries).length === 0 ? (
           <div className="text-center text-zinc-600 text-sm mt-8">
-            セッションを選択して「サマリーを表示」ボタンを押してください
+            {t('history.selectSessionNote')}
           </div>
         ) : (
           <div className="space-y-4">
@@ -310,7 +312,7 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
                           summaryData.data.key_decisions.length > 0 && (
                             <div className="mb-2">
                               <h4 className="text-xs font-semibold text-zinc-700 mb-1">
-                                決定事項
+                                {t('history.keyDecisions')}
                               </h4>
                               <ul className="text-xs text-zinc-600 list-disc list-inside">
                                 {summaryData.data.key_decisions.map(
@@ -331,7 +333,7 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
                           summaryData.data.action_items.length > 0 && (
                             <div className="mb-3">
                               <h4 className="text-xs font-semibold text-zinc-700 mb-1">
-                                宿題
+                                {t('history.actionItems')}
                               </h4>
                               <ul className="text-xs text-zinc-600 list-disc list-inside">
                                 {summaryData.data.action_items.map(
@@ -353,12 +355,12 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
                           }
                           className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
                         >
-                          全文を見る →
+                          {t('history.viewFullText')}
                         </button>
                       </div>
                     ) : (
                       <div className="text-sm text-zinc-600">
-                        サマリーが見つかりませんでした
+                        {t('history.summaryNotFound')}
                       </div>
                     )}
                   </div>

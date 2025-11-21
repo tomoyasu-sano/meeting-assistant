@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from 'next-intl';
 import type { MeetingEvaluation } from "@/types/evaluation";
 import ReactMarkdown from "react-markdown";
 
@@ -9,6 +10,7 @@ type EvaluationTabProps = {
 };
 
 export function EvaluationTab({ meetingId }: EvaluationTabProps) {
+  const t = useTranslations();
   const [sessions, setSessions] = useState<any[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string>("");
   const [evaluation, setEvaluation] = useState<MeetingEvaluation | null>(null);
@@ -75,23 +77,23 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
     <div className="flex flex-col h-full">
       {/* ヘッダー */}
       <div className="border-b border-zinc-200 px-6 py-4">
-        <h2 className="text-lg font-semibold text-zinc-900">会議評価</h2>
+        <h2 className="text-lg font-semibold text-zinc-900">{t('evaluation.title')}</h2>
         <p className="mt-1 text-sm text-zinc-600">
-          過去の会議に対するAIの評価とフィードバックを確認できます
+          {t('evaluation.description')}
         </p>
       </div>
 
       {/* セッション選択 */}
       <div className="border-b border-zinc-200 bg-zinc-50 px-6 py-4">
         <label className="block text-sm font-medium text-zinc-700 mb-2">
-          セッションを選択
+          {t('evaluation.selectSession')}
         </label>
         <select
           value={selectedSessionId}
           onChange={(e) => handleSessionChange(e.target.value)}
           className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="">-- セッションを選択してください --</option>
+          <option value="">{t('evaluation.pleaseSelectSession')}</option>
           {sessions.map((session) => (
             <option key={session.sessionId} value={session.sessionId}>
               {session.title} ({new Date(session.occurredAt).toLocaleString("ja-JP")})
@@ -104,11 +106,11 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
       <div className="flex-1 overflow-y-auto px-6 py-4">
         {!selectedSessionId ? (
           <div className="text-center text-zinc-600 text-sm mt-8">
-            セッションを選択してください
+            {t('evaluation.selectSessionPrompt')}
           </div>
         ) : isLoading ? (
           <div className="text-center text-zinc-600 text-sm mt-8">
-            読み込み中...
+            {t('common.loading')}
           </div>
         ) : error ? (
           <div className="text-center text-red-600 text-sm mt-8">{error}</div>
@@ -117,7 +119,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
             {/* 全体評価 */}
             <div className="bg-white border border-zinc-200 rounded-lg p-6">
               <h3 className="text-base font-semibold text-zinc-900 mb-3">
-                📊 全体評価
+                {t('evaluation.overallEvaluation')}
               </h3>
               <div className="prose prose-sm max-w-none text-zinc-700">
                 <ReactMarkdown>{evaluation.overall_feedback}</ReactMarkdown>
@@ -127,7 +129,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
             {/* ポジティブな面 */}
             <div className="bg-green-50 border border-green-200 rounded-lg p-6">
               <h3 className="text-base font-semibold text-green-900 mb-3">
-                ✨ 良かった点
+                {t('evaluation.positiveAspects')}
               </h3>
               <div className="prose prose-sm max-w-none text-green-800">
                 <ReactMarkdown>{evaluation.positive_aspects}</ReactMarkdown>
@@ -137,7 +139,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
             {/* 次回に向けた提案 */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
               <h3 className="text-base font-semibold text-blue-900 mb-3">
-                💡 次回試したいこと
+                {t('evaluation.nextSteps')}
               </h3>
               <div className="prose prose-sm max-w-none text-blue-800">
                 <ReactMarkdown>
@@ -149,7 +151,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
             {/* ホスト向けフィードバック */}
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
               <h3 className="text-base font-semibold text-purple-900 mb-3">
-                👤 ホストへのアドバイス
+                {t('evaluation.adviceForHost')}
               </h3>
               <div className="prose prose-sm max-w-none text-purple-800">
                 <ReactMarkdown>{evaluation.host_feedback}</ReactMarkdown>
@@ -159,7 +161,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
             {/* チーム全体向けフィードバック */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
               <h3 className="text-base font-semibold text-amber-900 mb-3">
-                👥 チーム全体へのメッセージ
+                {t('evaluation.messageForTeam')}
               </h3>
               <div className="prose prose-sm max-w-none text-amber-800">
                 <ReactMarkdown>{evaluation.team_feedback}</ReactMarkdown>
@@ -172,7 +174,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
               {evaluation.atmosphere_comment && (
                 <div className="bg-white border border-zinc-200 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-zinc-900 mb-2">
-                    🌈 全体の雰囲気
+                    {t('evaluation.overallAtmosphere')}
                   </h4>
                   <p className="text-sm text-zinc-700">
                     {evaluation.atmosphere_comment}
@@ -184,7 +186,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
               {evaluation.discussion_depth_comment && (
                 <div className="bg-white border border-zinc-200 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-zinc-900 mb-2">
-                    🔍 議論の深まり
+                    {t('evaluation.discussionDepth')}
                   </h4>
                   <p className="text-sm text-zinc-700">
                     {evaluation.discussion_depth_comment}
@@ -196,7 +198,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
               {evaluation.time_management_comment && (
                 <div className="bg-white border border-zinc-200 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-zinc-900 mb-2">
-                    ⏰ 時間配分
+                    {t('evaluation.timeManagement')}
                   </h4>
                   <p className="text-sm text-zinc-700">
                     {evaluation.time_management_comment}
@@ -208,7 +210,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
               {evaluation.engagement_comment && (
                 <div className="bg-white border border-zinc-200 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-zinc-900 mb-2">
-                    🙌 参加者の積極性
+                    {t('evaluation.participantEngagement')}
                   </h4>
                   <p className="text-sm text-zinc-700">
                     {evaluation.engagement_comment}
@@ -219,7 +221,7 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
 
             {/* 生成日時 */}
             <div className="text-center text-xs text-zinc-500 mt-6">
-              評価生成日時: {new Date(evaluation.generated_at).toLocaleString("ja-JP")}
+              {t('evaluation.evaluationGenerated')}{new Date(evaluation.generated_at).toLocaleString("ja-JP")}
             </div>
           </div>
         ) : null}

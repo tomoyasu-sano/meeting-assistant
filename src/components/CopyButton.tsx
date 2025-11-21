@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from 'next-intl';
 
 type CopyButtonProps = {
   text: string;
@@ -10,10 +11,14 @@ type CopyButtonProps = {
 
 export function CopyButton({
   text,
-  label = "コピー",
-  successMessage = "コピーしました",
+  label,
+  successMessage,
 }: CopyButtonProps) {
+  const t = useTranslations();
   const [copied, setCopied] = useState(false);
+
+  const defaultLabel = label || t('common.copy');
+  const defaultSuccessMessage = successMessage || t('common.copied');
 
   const handleCopy = async () => {
     try {
@@ -21,8 +26,8 @@ export function CopyButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      console.error("コピーに失敗しました:", error);
-      alert("コピーに失敗しました");
+      console.error(t('common.copyFailed'), error);
+      alert(t('common.copyFailed'));
     }
   };
 
@@ -32,7 +37,7 @@ export function CopyButton({
       className="rounded-lg bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
       disabled={copied}
     >
-      {copied ? "✓ " + successMessage : label}
+      {copied ? "✓ " + defaultSuccessMessage : defaultLabel}
     </button>
   );
 }

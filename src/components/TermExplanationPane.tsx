@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from "react";
+import { useTranslations } from 'next-intl';
 import { getIndustryLabels } from "@/lib/constants/industries";
 
 export type TermCard = {
@@ -44,6 +45,7 @@ export type TermExplanationPaneRef = {
 
 export const TermExplanationPane = forwardRef<TermExplanationPaneRef, TermExplanationPaneProps>(
   ({ meetingId, sessionId, isSessionActive, transcripts, sessionStartTime, industries = [], onTermCardsChange }, ref) => {
+    const t = useTranslations();
     const [activeTab, setActiveTab] = useState<"terms" | "transcripts">("terms");
     const [termCards, setTermCards] = useState<TermCard[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -591,7 +593,7 @@ ${industryContext}
                   : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
-              用語解説
+              {t('liveSession.terminologyTitle')}
             </button>
             <button
               onClick={() => setActiveTab("transcripts")}
@@ -601,7 +603,7 @@ ${industryContext}
                   : "text-zinc-600 hover:text-zinc-900"
               }`}
             >
-              文字起こし
+              {t('liveSession.transcriptTitle')}
             </button>
           </nav>
         </div>
@@ -614,7 +616,7 @@ ${industryContext}
               <div className="border-b border-indigo-100 bg-indigo-50 px-4 py-2">
                 <div className="flex items-center gap-2 text-xs text-indigo-700">
                   <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-500"></span>
-                  <span>用語解析中…</span>
+                  <span>{t('common.processing')}</span>
                 </div>
               </div>
             )}
@@ -624,7 +626,7 @@ ${industryContext}
               {termCards.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                   <p className="text-sm text-zinc-500">
-                    会議中に出た用語はこちらに表示されます
+                    {t('liveSession.terminologyPrompt')}
                   </p>
                 </div>
               ) : (
@@ -659,7 +661,7 @@ ${industryContext}
               {transcripts.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                   <p className="text-sm text-zinc-500">
-                    会議中の発言はこちらに表示されます
+                    {t('liveSession.transcriptPrompt')}
                   </p>
                 </div>
               ) : (

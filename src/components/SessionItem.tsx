@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from 'next-intl';
 
 type Transcript = {
   id: string;
@@ -28,6 +29,7 @@ type SessionItemProps = {
 };
 
 export function SessionItem({ session, isLatest }: SessionItemProps) {
+  const t = useTranslations();
   const [isExpanded, setIsExpanded] = useState(isLatest);
 
   const startedAt = new Date(session.started_at);
@@ -43,9 +45,9 @@ export function SessionItem({ session, isLatest }: SessionItemProps) {
   };
 
   const statusLabels: Record<string, string> = {
-    active: "実行中",
-    paused: "一時停止",
-    ended: "終了",
+    active: t('liveSession.sessionItem.active'),
+    paused: t('liveSession.sessionItem.paused'),
+    ended: t('liveSession.sessionItem.ended'),
   };
 
   const formatTimestamp = (startTime: number | null) => {
@@ -77,18 +79,18 @@ export function SessionItem({ session, isLatest }: SessionItemProps) {
               {statusLabels[session.status] || session.status}
             </span>
             {duration !== null && (
-              <span className="text-xs text-zinc-500">{duration}分</span>
+              <span className="text-xs text-zinc-500">{duration}{t('liveSession.sessionItem.minutes')}</span>
             )}
             <span className="text-xs text-zinc-500">
-              発言数: {sortedTranscripts.length}件
+              {t('liveSession.sessionItem.statements')}{sortedTranscripts.length}{t('liveSession.sessionItem.statementsCount')}
             </span>
           </div>
           <p className="mt-2 text-sm text-zinc-700">
-            開始: {startedAt.toLocaleString("ja-JP")}
+            {t('liveSession.sessionItem.started')}{startedAt.toLocaleString("ja-JP")}
           </p>
           {endedAt && (
             <p className="text-sm text-zinc-700">
-              終了: {endedAt.toLocaleString("ja-JP")}
+              {t('liveSession.sessionItem.endedAt')}{endedAt.toLocaleString("ja-JP")}
             </p>
           )}
         </div>
@@ -124,7 +126,7 @@ export function SessionItem({ session, isLatest }: SessionItemProps) {
                       <p className="text-sm font-medium text-zinc-900">
                         {transcript.participant?.display_name ||
                           transcript.speaker_label ||
-                          "不明な話者"}
+                          t('liveSession.sessionItem.unknownSpeaker')}
                       </p>
                       <p className="mt-1 text-sm text-zinc-700">
                         {transcript.text}
@@ -139,7 +141,7 @@ export function SessionItem({ session, isLatest }: SessionItemProps) {
             </div>
           ) : (
             <p className="text-center text-sm text-zinc-500">
-              このセッションには文字起こしがありません
+              {t('liveSession.sessionItem.noTranscripts')}
             </p>
           )}
         </div>

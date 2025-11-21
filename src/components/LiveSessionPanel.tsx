@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { flushSync } from "react-dom";
+import { useTranslations } from 'next-intl';
 import { useAIMode } from "@/contexts/AIModeContext";
 import { useRealtimeAI } from "@/hooks/useRealtimeAI";
 import { useGoogleAI } from "@/hooks/useGoogleAI";
@@ -77,6 +78,7 @@ export function LiveSessionPanel({
   meetingId: string;
   industries?: string[];
 }) {
+  const t = useTranslations();
   const { aiMode } = useAIMode();
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const transcriptsRef = useRef<Transcript[]>([]);
@@ -2078,10 +2080,10 @@ export function LiveSessionPanel({
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="text-sm text-zinc-600">
             <p className="font-semibold text-zinc-900">
-              セッション管理
+              {t('liveSession.sessionManagement')}
             </p>
             <p>
-              会議の開始・一時停止・終了をここから操作できます
+              {t('liveSession.sessionManagementDescription')}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -2091,7 +2093,7 @@ export function LiveSessionPanel({
                 disabled={isLoading}
                 className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
               >
-                {isLoading ? "開始中..." : "会議を開始"}
+                {isLoading ? t('liveSession.starting') : t('liveSession.startMeeting')}
               </button>
             )}
             {sessionStatus === "active" && (
@@ -2101,14 +2103,14 @@ export function LiveSessionPanel({
                   disabled={isLoading}
                   className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
                 >
-                  一時停止
+                  {t('liveSession.pauseSession')}
                 </button>
                 <button
                   onClick={endSession}
                   disabled={isLoading}
                   className="rounded-lg border border-red-300 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
                 >
-                  終了
+                  {t('liveSession.endSession')}
                 </button>
               </>
             )}
@@ -2119,14 +2121,14 @@ export function LiveSessionPanel({
                   disabled={isLoading}
                   className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
                 >
-                  {isLoading ? "再開中..." : "再開"}
+                  {isLoading ? t('liveSession.resuming') : t('liveSession.resumeSession')}
                 </button>
                 <button
                   onClick={endSession}
                   disabled={isLoading}
                   className="rounded-lg border border-red-300 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
                 >
-                  終了
+                  {t('liveSession.endSession')}
                 </button>
               </>
             )}
@@ -2136,7 +2138,7 @@ export function LiveSessionPanel({
                 disabled={isLoading}
                 className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
               >
-                新しいセッションを開始
+                {t('liveSession.startNewSession')}
               </button>
             )}
 
@@ -2144,19 +2146,19 @@ export function LiveSessionPanel({
             {sessionStatus !== "idle" && (
               <span className="text-xs text-zinc-500">
                 {connectionStatus === "connecting" && (
-                  <span className="text-yellow-600">接続中...</span>
+                  <span className="text-yellow-600">{t('liveSession.connectionConnecting')}</span>
                 )}
                 {connectionStatus === "connected" && (
                   <span className="flex items-center gap-1 text-green-600">
                     <span className="h-2 w-2 animate-pulse rounded-full bg-green-500"></span>
-                    接続済み
+                    {t('liveSession.connectionConnected')}
                   </span>
                 )}
                 {connectionStatus === "disconnected" && (
-                  <span className="text-red-600">切断</span>
+                  <span className="text-red-600">{t('liveSession.connectionDisconnected')}</span>
                 )}
                 {connectionStatus === "ended" && (
-                  <span className="text-blue-600">完了</span>
+                  <span className="text-blue-600">{t('liveSession.connectionEnded')}</span>
                 )}
               </span>
             )}
@@ -2234,7 +2236,7 @@ export function LiveSessionPanel({
               }
             `}
           >
-            議論アシスト
+            {t('liveSession.tabs.discussionAssist')}
             {assistMessages.length > 0 && (
               <span className="ml-2 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-indigo-600 rounded-full">
                 {assistMessages.length}
@@ -2256,7 +2258,7 @@ export function LiveSessionPanel({
               }
             `}
           >
-            過去履歴
+            {t('liveSession.tabs.history')}
           </button>
           <button
             role="tab"
@@ -2273,7 +2275,7 @@ export function LiveSessionPanel({
               }
             `}
           >
-            会議評価
+            {t('liveSession.tabs.evaluation')}
           </button>
           {/* モバイル専用タブ: 用語解説 (PCでは右ペインで表示) */}
           <button
@@ -2291,7 +2293,7 @@ export function LiveSessionPanel({
               }
             `}
           >
-            用語解説
+            {t('liveSession.tabs.terms')}
           </button>
           {/* モバイル専用タブ: 文字起こし (PCでは右ペインで表示) */}
           <button
@@ -2309,7 +2311,7 @@ export function LiveSessionPanel({
               }
             `}
           >
-            文字起こし
+            {t('liveSession.tabs.transcripts')}
           </button>
         </nav>
       </div>
@@ -2334,10 +2336,10 @@ export function LiveSessionPanel({
             <div className="border-b border-zinc-200 px-6 py-4">
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
-                  用語解説
+                  {t('liveSession.terminologyTitle')}
                 </h2>
                 <p className="mt-1 text-sm text-zinc-600">
-                  会議中に出た専門用語を自動で解説します
+                  {t('liveSession.terminologyDescription')}
                 </p>
               </div>
             </div>
@@ -2345,7 +2347,7 @@ export function LiveSessionPanel({
               {termCards.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                   <p className="text-sm text-zinc-500">
-                    会議中に出た用語はこちらに表示されます
+                    {t('liveSession.terminologyPrompt')}
                   </p>
                 </div>
               ) : (
@@ -2382,10 +2384,10 @@ export function LiveSessionPanel({
             <div className="border-b border-zinc-200 px-6 py-4">
               <div>
                 <h2 className="text-lg font-semibold text-zinc-900">
-                  文字起こし
+                  {t('liveSession.transcriptTitle')}
                 </h2>
                 <p className="mt-1 text-sm text-zinc-600">
-                  会議の発言がリアルタイムで表示されます
+                  {t('liveSession.transcriptDescription')}
                 </p>
               </div>
             </div>
@@ -2393,7 +2395,7 @@ export function LiveSessionPanel({
               {transcripts.length === 0 ? (
                 <div className="flex h-full items-center justify-center text-center">
                   <p className="text-sm text-zinc-500">
-                    会議中の発言はこちらに表示されます
+                    {t('liveSession.transcriptPrompt')}
                   </p>
                 </div>
               ) : (
@@ -2712,10 +2714,10 @@ export function LiveSessionPanel({
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <h2 className="text-lg font-semibold text-zinc-900">
-                議論アシスト
+                {t('liveSession.discussionAssistTitle')}
               </h2>
               <p className="mt-1 text-sm text-zinc-600">
-                議論のまとめと抜け漏れチェックを行います
+                {t('liveSession.discussionAssistDescription')}
               </p>
             </div>
             <button
@@ -2733,10 +2735,10 @@ export function LiveSessionPanel({
               {isSummarizing ? (
                 <span className="flex items-center gap-2">
                   <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  整理中...
+                  {t('common.processing')}
                 </span>
               ) : (
-                'ここまでの議論を整理する'
+                t('liveSession.summarizeDiscussion')
               )}
             </button>
           </div>
@@ -2749,12 +2751,12 @@ export function LiveSessionPanel({
               <div className="text-center">
                 <p className="text-sm text-zinc-500">
                   {sessionStatus === "idle"
-                    ? "会議を開始すると、議論アシストが利用できます"
+                    ? t('liveSession.discussionAssistPrompt')
                     : sessionStatus === "paused"
-                      ? "会議が一時停止中です"
+                      ? t('liveSession.sessionPaused')
                       : sessionStatus === "ended"
-                        ? "会議が終了しました"
-                        : "「ここまでの議論を整理する」ボタンを押すと、AIが議論を整理します"}
+                        ? t('liveSession.sessionEndedMessage')
+                        : t('liveSession.summarizeDiscussionPrompt')}
                 </p>
               </div>
             </div>
@@ -2776,7 +2778,7 @@ export function LiveSessionPanel({
                   {message.metadata?.type === 'checkpoint' && (
                     <div className="mb-2 flex items-center gap-2 text-xs opacity-75">
                       <span className="inline-block w-2 h-2 bg-current rounded-full"></span>
-                      <span>チェックポイント</span>
+                      <span>{t('liveSession.viewer.checkpoint')}</span>
                     </div>
                   )}
                   <div className="text-sm leading-relaxed">
