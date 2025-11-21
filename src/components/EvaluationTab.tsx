@@ -132,7 +132,14 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
                 {t('evaluation.positiveAspects')}
               </h3>
               <div className="prose prose-sm max-w-none text-green-800">
-                <ReactMarkdown>{evaluation.positive_aspects}</ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    ul: ({ children }) => <div className="space-y-2">{children}</div>,
+                    li: ({ children }) => <div className="text-sm">{children}</div>,
+                  }}
+                >
+                  {evaluation.positive_aspects}
+                </ReactMarkdown>
               </div>
             </div>
 
@@ -142,7 +149,12 @@ export function EvaluationTab({ meetingId }: EvaluationTabProps) {
                 {t('evaluation.nextSteps')}
               </h3>
               <div className="prose prose-sm max-w-none text-blue-800">
-                <ReactMarkdown>
+                <ReactMarkdown
+                  components={{
+                    ul: ({ children }) => <div className="space-y-2">{children}</div>,
+                    li: ({ children }) => <div className="text-sm">{children}</div>,
+                  }}
+                >
                   {evaluation.improvement_suggestions}
                 </ReactMarkdown>
               </div>

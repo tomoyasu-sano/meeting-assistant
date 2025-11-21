@@ -320,7 +320,10 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
                                     <li key={idx}>
                                       {typeof decision === "string"
                                         ? decision
-                                        : decision.description || ""}
+                                        : decision.decision || ""}
+                                      {decision.context && (
+                                        <span className="text-zinc-500"> ({decision.context})</span>
+                                      )}
                                     </li>
                                   )
                                 )}
@@ -341,7 +344,13 @@ export function HistoryTab({ meetingId }: HistoryTabProps) {
                                     <li key={idx}>
                                       {typeof item === "string"
                                         ? item
-                                        : item.description || ""}
+                                        : item.item || ""}
+                                      {item.assignee && (
+                                        <span className="text-blue-600"> [担当: {item.assignee}]</span>
+                                      )}
+                                      {item.deadline && (
+                                        <span className="text-orange-600"> [期限: {item.deadline}]</span>
+                                      )}
                                     </li>
                                   )
                                 )}

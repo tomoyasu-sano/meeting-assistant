@@ -128,6 +128,7 @@ export function LiveSessionPanel({
   const [lastSummaryTimestamp, setLastSummaryTimestamp] = useState<string | null>(null);
   const assistMessagesEndRef = useRef<HTMLDivElement>(null);
   const [assistInput, setAssistInput] = useState("");
+  const assistInputRef = useRef<HTMLTextAreaElement>(null);
   const [isSendingChat, setIsSendingChat] = useState(false);
   const [pastSessionSummaries, setPastSessionSummaries] = useState<Array<{
     sessionId: string;
@@ -1797,6 +1798,11 @@ export function LiveSessionPanel({
     const userMessage = assistInput.trim();
     setAssistInput("");
 
+    // textareaの高さをリセット
+    if (assistInputRef.current) {
+      assistInputRef.current.style.height = 'auto';
+    }
+
     try {
       setIsSendingChat(true);
 
@@ -2912,38 +2918,67 @@ export function LiveSessionPanel({
         </div>
 
         {/* 入力エリア */}
-        <div className="border-t border-zinc-200 p-4">
+        <div className="border-t border-zinc-200 p-4 bg-zinc-50">
           <form
             onSubmit={handleSendChat}
-            className="flex gap-2"
+            className="flex items-end gap-3"
           >
-            <input
-              type="text"
-              value={assistInput}
-              onChange={(e) => setAssistInput(e.target.value)}
-              placeholder="決まったことだけ整理して"
-              disabled={sessionStatus !== 'active' || isSummarizing || isSendingChat}
-              className={`
-                flex-1 px-4 py-2 rounded-lg border border-zinc-300
-                focus:outline-none focus:ring-2 focus:ring-indigo-500
-                ${sessionStatus !== 'active' || isSummarizing || isSendingChat ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed' : ''}
-              `}
-            />
+            <div className="flex-1 bg-white rounded-xl shadow-sm border border-zinc-200 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-opacity-20 transition-all">
+              <textarea
+                ref={assistInputRef}
+                value={assistInput}
+                onChange={(e) => {
+                  setAssistInput(e.target.value);
+                  // 自動高さ調整
+                  e.target.style.height = 'auto';
+                  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                }}
+                onKeyDown={(e) => {
+                  // Enterで送信、Shift+Enterで改行
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendChat(e);
+                  }
+                }}
+                placeholder="決まったことだけ整理して"
+                disabled={sessionStatus !== 'active' || isSummarizing || isSendingChat}
+                rows={1}
+                className={`
+                  w-full px-4 py-3 rounded-xl resize-none
+                  focus:outline-none
+                  ${sessionStatus !== 'active' || isSummarizing || isSendingChat ? 'bg-zinc-50 text-zinc-400 cursor-not-allowed' : 'bg-white text-zinc-900'}
+                `}
+                style={{ maxHeight: '120px', minHeight: '44px' }}
+              />
+            </div>
             <button
               type="submit"
               disabled={sessionStatus !== 'active' || isSummarizing || isSendingChat || !assistInput.trim()}
               className={`
-                px-6 py-2 rounded-lg text-sm font-medium transition-all duration-150
+                p-3 rounded-xl text-sm font-medium transition-all duration-150 shadow-sm
                 ${
                   sessionStatus !== 'active' || isSummarizing || isSendingChat || !assistInput.trim()
                     ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
-                    : 'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                    : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
                 }
               `}
+              title={isSendingChat ? '送信中...' : '送信 (Enter)'}
             >
-              {isSendingChat ? '送信中...' : '送信'}
+              {isSendingChat ? (
+                <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              )}
             </button>
           </form>
+          <p className="text-xs text-zinc-500 mt-2 px-1">
+            Enter で送信 / Shift + Enter で改行
+          </p>
         </div>
       </div>
       </div>
